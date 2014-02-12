@@ -36,10 +36,11 @@ public class HandySQLiteHelper extends SQLiteOpenHelper {
     }
 
     private static void copyIfNotExists(InputStream input, File destinationPath) throws IOException {
+        OutputStream output = null;
         try {
             destinationPath.getParentFile().mkdirs();
             if (!destinationPath.isFile()) { // If exists and is directory exception will be thrown, skip copying otherwise
-                OutputStream output = new BufferedOutputStream(new FileOutputStream(destinationPath));
+                output = new BufferedOutputStream(new FileOutputStream(destinationPath));
                 int bufferSize = 1024 * 4;
                 byte[] buffer = new byte[bufferSize];
                 int len = 0;
@@ -51,6 +52,7 @@ public class HandySQLiteHelper extends SQLiteOpenHelper {
             }
         } finally {
             input.close();
+            if (output != null) output.close();
         }
     }
 
