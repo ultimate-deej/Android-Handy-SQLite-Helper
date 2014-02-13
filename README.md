@@ -7,18 +7,22 @@ Setup
 =====
 Maven
 -----
-    <dependency>
-        <groupId>org.deejdev.database.handysqlite</groupId>
-        <artifactId>handysqlite</artifactId>
-        <version>1.0</version>
-        <type>aar</type>
-    </dependency>
+```xml
+<dependency>
+    <groupId>org.deejdev.database.handysqlite</groupId>
+    <artifactId>handysqlite</artifactId>
+    <version>1.0</version>
+    <type>aar</type>
+</dependency>
+```
 Gradle
 ------
-    dependencies {
-        ...
-        compile 'org.deejdev.database.handysqlite:handysqlite:1.0'
-    }
+```groovy
+dependencies {
+    ...
+    compile 'org.deejdev.database.handysqlite:handysqlite:1.0'
+}
+```
 
 Usage
 =====
@@ -29,48 +33,54 @@ Examples
 --------
 Basic usage. Database is read from asset and extracted into standard database directory.
 
-    public class OpenHelper extends HandySQLiteHelper {
-        private static final int DATABASE_VERSION = 1;
-        private static final String DATABASE_NAME = "db.sqlite"; // both asset name and destination file name
-
-        public OpenHelper(Context context, InputStream input, File destinationPath, SQLiteDatabase.CursorFactory factory, int version) {
-            super(context, getInput(context), context.getDatabasePath(DATABASE_NAME), null, DATABASE_VERSION);
-        }
-
-        private static InputStream getInput(Context context) {
-            try {
-                AssetManager assets = context.getAssets();
-                return assets.open(DATABASE_NAME);
-            } catch (IOException e) {
-                // Should not happen normally
-                throw new HandySQLiteHelperException("Error reading database from assets", e);
-            }
-        }
-    }
-
-To place database in external storage specify a corresponding path
+```java
+public class OpenHelper extends HandySQLiteHelper {
+    private static final int DATABASE_VERSION = 1;
+    private static final String DATABASE_NAME = "db.sqlite"; // both asset name and destination file name
 
     public OpenHelper(Context context, InputStream input, File destinationPath, SQLiteDatabase.CursorFactory factory, int version) {
-        super(context, getInput(context), new File("/mnt/sdcard/some/random/path"), null, DATABASE_VERSION);
+        super(context, getInput(context), context.getDatabasePath(DATABASE_NAME), null, DATABASE_VERSION);
     }
-
-If you are developing for Android 2.2, and your database is larger than 1MB, consider splitting it into smaller chunks.
-See [this issue](http://code.google.com/p/android/issues/detail?id=37)
 
     private static InputStream getInput(Context context) {
         try {
             AssetManager assets = context.getAssets();
-            ArrayList<InputStream> chunks = new ArrayList<InputStream>();
-            chunks.add(assets.open("database_aa"));
-            chunks.add(assets.open("database_ab"));
-            chunks.add(assets.open("database_ac"));
-            chunks.add(assets.open("database_ad"));
-            return new SequenceInputStream(Collections.enumeration(chunks));
+            return assets.open(DATABASE_NAME);
         } catch (IOException e) {
             // Should not happen normally
-            throw new EmbeddedSQLiteException("Error reading database from assets", e);
+            throw new HandySQLiteHelperException("Error reading database from assets", e);
         }
     }
+}
+```
+
+To place database in external storage specify a corresponding path
+
+```java
+public OpenHelper(Context context, InputStream input, File destinationPath, SQLiteDatabase.CursorFactory factory, int version) {
+    super(context, getInput(context), new File("/mnt/sdcard/some/random/path"), null, DATABASE_VERSION);
+}
+```
+
+If you are developing for Android 2.2, and your database is larger than 1MB, consider splitting it into smaller chunks.
+See [this issue](http://code.google.com/p/android/issues/detail?id=37)
+
+```java
+private static InputStream getInput(Context context) {
+    try {
+        AssetManager assets = context.getAssets();
+        ArrayList<InputStream> chunks = new ArrayList<InputStream>();
+        chunks.add(assets.open("database_aa"));
+        chunks.add(assets.open("database_ab"));
+        chunks.add(assets.open("database_ac"));
+        chunks.add(assets.open("database_ad"));
+        return new SequenceInputStream(Collections.enumeration(chunks));
+    } catch (IOException e) {
+        // Should not happen normally
+        throw new EmbeddedSQLiteException("Error reading database from assets", e);
+    }
+}
+```
 
 License
 =======
