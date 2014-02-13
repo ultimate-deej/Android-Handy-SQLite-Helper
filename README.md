@@ -3,6 +3,23 @@ Handy SQLite Helper for Android
 
 A library for shipping SQLite databases within application assets and optionally placing them in external storage
 
+Setup
+=====
+Maven
+-----
+    <dependency>
+        <groupId>org.deejdev.database.handysqlite</groupId>
+        <artifactId>handysqlite</artifactId>
+        <version>1.0</version>
+        <type>aar</type>
+    </dependency>
+Gradle
+------
+    dependencies {
+        ...
+        compile 'org.deejdev.database.handysqlite:handysqlite:1.0'
+    }
+
 Usage
 =====
 
